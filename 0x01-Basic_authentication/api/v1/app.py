@@ -15,7 +15,7 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 
 @app.errorhandler(404)
-def not_found(error) -> str:
+def not_found(error):  # -> str:
     """ Not found handler
     """
     # print(error)
@@ -24,14 +24,18 @@ def not_found(error) -> str:
 
 @app.errorhandler(401)
 def unauthorized(error):
-    """401 Unauthorized handler
-    Args:
-        error (_type_): _description_
-    Returns:
-        str: _description_
+    """
+    401 error Unauthorized handler
     """
     return jsonify({"error": "Unauthorized"}), 401
 
+
+@app.errorhandler(403)
+def forbidden(error):
+    """
+    403 error handler
+    """
+    return jsonify({"error": "Forbidden"}), 403
 
 if __name__ == "__main__":
     host = getenv("API_HOST", "0.0.0.0")
