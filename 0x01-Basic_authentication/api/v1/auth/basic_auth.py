@@ -3,6 +3,7 @@
 API Authentication
 """
 import base64
+from typing import Tuple
 from api.v1.auth.auth import Auth
 
 
@@ -56,3 +57,23 @@ class BasicAuth(Auth):
             return decoded_value
         except Exception:
             return None  # type: ignore
+
+    def extract_user_credentials(
+            self, decoded_base64_authorization_header: str) -> Tuple[str, str]:
+        """
+        Args:
+            decoded_base64_authorization_header (str): user email and password
+            from the Base64 decoded value.
+        Returns:
+            Tuple[str, str]: user email and the user password separated by `:`
+        """
+        if decoded_base64_authorization_header is None:
+            return (None, None)
+
+        if isinstance(decoded_base64_authorization_header, str) is False:
+            return (None, None)  # type: ignore
+
+        decoded_base64_list = decoded_base64_authorization_header.split(":")
+        if len(decoded_base64_list) < 2:
+            return (None, None)  # type: ignore
+        return (decoded_base64_list[0], decoded_base64_list[1])
