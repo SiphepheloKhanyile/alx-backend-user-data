@@ -3,7 +3,6 @@
 API Authentication
 """
 import base64
-import re
 from typing import Tuple, TypeVar
 from api.v1.auth.auth import Auth
 from models.user import User
@@ -22,28 +21,21 @@ class BasicAuth(Auth):
             str: Base64 part of the Authorization header
             for a Basic Authentication
         """
-        # if authorization_header is None:
-        #     return None
+        if authorization_header is None:
+            return None
 
-        # if isinstance(authorization_header, str) is False:
-        #     return None  # type: ignore
+        if isinstance(authorization_header, str) is False:
+            return None  # type: ignore
 
-        # auth_header_list = authorization_header.split(" ")
+        auth_header_list = authorization_header.split(" ")
 
-        # if len(auth_header_list) < 2:
-        #     return None  # type: ignore
+        if len(auth_header_list) < 2:
+            return None  # type: ignore
 
-        # if auth_header_list[0] != "Basic":
-        #     return None  # type: ignore
+        if auth_header_list[0] != "Basic":
+            return None  # type: ignore
 
-        # return auth_header_list[1]
-
-        if isinstance(authorization_header, str):
-            pattern = r'Basic (?P<token>.+)'
-            field_match = re.fullmatch(pattern, authorization_header.strip())
-            if field_match is not None:
-                return field_match.group('token')
-        return None
+        return auth_header_list[1]
 
     def decode_base64_authorization_header(
             self, base64_authorization_header: str) -> str:
