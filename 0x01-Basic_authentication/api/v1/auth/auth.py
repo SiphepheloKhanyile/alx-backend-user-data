@@ -3,7 +3,7 @@
 API Authentication
 """
 from typing import List, TypeVar
-from flask import request
+from flask import request  # pylint: disable=W0611
 
 
 class Auth:
@@ -39,12 +39,13 @@ class Auth:
             str: _description_
         """
         if request_obj is None:
-            return None
+            return None  # type: ignore
         if request_obj.headers.get("Authorization") is None:
-            return None
+            return None  # type: ignore
         return request_obj.headers.get("Authorization")
 
-    def current_user(self, request_obj=None) -> TypeVar('User'):
+    def current_user(self, request_obj=None)\
+            -> TypeVar('User'):  # type: ignore
         """_summary_
         """
         return None
