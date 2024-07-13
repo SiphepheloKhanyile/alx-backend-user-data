@@ -12,12 +12,12 @@ class Auth:
     """
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """_summary_
+        """check if path requires authentication
         Args:
-            path (str): _description_
-            excluded_paths (List[str]): _description_
+            path (str): request path
+            excluded_paths (List[str]): excluded paths
         Returns:
-            bool: _description_
+            bool: boolean
         """
         if path is not None and path[-1] != "/":
             temp_path = path
@@ -31,16 +31,20 @@ class Auth:
 
         return False
 
-    def authorization_header(self, request=None) -> str:
-        """_summary_
+    def authorization_header(self, request_obj=None) -> str:
+        """check if `Authorization` header exists
         Args:
-            request (_type_, optional): _description_. Defaults to None.
+            request_obj (_type_): request. Defaults to None.
         Returns:
             str: _description_
         """
-        return None
+        if request_obj is None:
+            return None
+        if request_obj.headers.get("Authorization") is None:
+            return None
+        return request_obj.headers.get("Authorization")
 
-    def current_user(self, request=None) -> TypeVar('User'):
+    def current_user(self, request_obj=None) -> TypeVar('User'):
         """_summary_
         """
         return None
