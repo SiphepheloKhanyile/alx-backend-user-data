@@ -1,51 +1,46 @@
 #!/usr/bin/env python3
+"""Authentication module for the API.
 """
-API Authentication
-"""
+from flask import request
 from typing import List, TypeVar
-from flask import request  # pylint: disable=W0611
+import re
+import os
 
 
 class Auth:
+    """Authentication class.
     """
-    Authentication
-    """
-
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """check if path requires authentication
-        Args:
-            path (str): request path
-            excluded_paths (List[str]): excluded paths
-        Returns:
-            bool: boolean
+        """Checks if a path requires authentication.
         """
-        if path is not None and path[-1] != "/":
-            temp_path = path
-            path = f"{temp_path}/"
+        if path is not None and excluded_paths is not None:
+            for exclusion_path in map(lambda x: x.strip(), excluded_paths):
+                pattern = ''
+                if exclusion_path[-1] == '*':
+                    pattern = '{}.*'.format(exclusion_path[0:-1])
+                elif exclusion_path[-1] == '/':
+                    pattern = '{}/*'.format(exclusion_path[0:-1])
+                else:
+                    pattern = '{}/*'.format(exclusion_path)
+                if re.match(pattern, path):
+                    return False
+        return True
 
-        if excluded_paths is None or len(excluded_paths) < 1:
-            return True
-
-        if path not in excluded_paths or path is None:
-            return True
-
-        return False
-
-    def authorization_header(self, request_obj=None) -> str:
-        """check if `Authorization` header exists
-        Args:
-            request_obj (_type_): request. Defaults to None.
-        Returns:
-            str: _description_
+    def authorization_header(self, request=None) -> str:
+        """Gets the authorization header field from the request.
         """
-        if request_obj is None:
-            return None  # type: ignore
-        if request_obj.headers.get("Authorization") is None:
-            return None  # type: ignore
-        return request_obj.headers.get("Authorization")
+        if request is not None:
+            return request.headers.get('Authorization', None)
+        return None
 
-    def current_user(self, request_obj=None)\
-            -> TypeVar('User'):  # type: ignore
-        """_summary_
+    def current_user(self, request=None) -> TypeVar('User'):
+        """Gets the current user from the request.
         """
         return None
+
+    def session_cookie(self, request=None) -> str:
+        """Gets the value of the cookie named SESSION_NAME.
+        """
+        if request is not None:
+            cookie_name = os.getenv('SESSION_NAME')
+            return request.cookies.get(cookie_name)
